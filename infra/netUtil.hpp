@@ -13,37 +13,6 @@ namespace Infra
 {
     namespace Net
     {
-        constexpr uint32_t START_SIGN = 0x11111111;
-
-        inline std::string &addMonsecNetHead(std::string &msg)
-        {
-            char netHead[9] = {0};
-
-            uint8_t *ptr = reinterpret_cast<uint8_t *>(netHead);
-
-            *reinterpret_cast<uint32_t *>(ptr) = htonl(START_SIGN);
-            ptr += sizeof(uint32_t);
-
-            *ptr = static_cast<uint8_t>(0x99);
-            ptr += sizeof(uint8_t);
-
-            *reinterpret_cast<uint32_t *>(ptr) = htonl(static_cast<uint32_t>(9 + msg.size()));
-
-            msg.insert(0, netHead, sizeof(netHead));
-
-            return msg;
-        }
-
-        inline std::string stripMonsecNetHead(std::string const &msg)
-        {
-            if (msg.size() > 9)
-            {
-                return msg.substr(9);
-            }
-
-            return msg;
-        }
-
         enum Protocol : int
         {
             TCP,
