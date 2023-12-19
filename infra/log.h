@@ -3,8 +3,6 @@
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
-// Used to initialize spdlog
-
 #define LOG_TRACE(...) SPDLOG_TRACE(__VA_ARGS__)
 #define LOG_DEBUG(...) SPDLOG_DEBUG(__VA_ARGS__)
 #define LOG_INFO(...) SPDLOG_INFO(__VA_ARGS__)
@@ -19,7 +17,11 @@
 #define LOGGER_ERROR(logger, ...) SPDLOG_LOGGER_ERROR(logger, __VA_ARGS__)
 #define LOGGER_CRITICAL(logger, ...) SPDLOG_LOGGER_CRITICAL(logger, __VA_ARGS__)
 
-inline void init_log(int log_level, std::string const& log_path, bool is_print) {
+inline void init_log(
+        int log_level,
+        std::string const& log_path,
+        bool is_print,
+        int flush_log_level = SPDLOG_LEVEL_INFO) {
     // 创建文件输出
     auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(log_path, false);
 
@@ -37,6 +39,9 @@ inline void init_log(int log_level, std::string const& log_path, bool is_print) 
 
     // 设置日志级别
     logger->set_level(static_cast<spdlog::level::level_enum>(log_level));
+
+    // 设置日志刷新策略：在指定级别或更高级别的日志记录时立即刷新
+    logger->flush_on(static_cast<spdlog::level::level_enum>(flush_log_level));
 
     // 设置为默认日志器
     spdlog::set_default_logger(logger);
