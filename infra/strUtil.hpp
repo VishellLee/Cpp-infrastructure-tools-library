@@ -5,24 +5,31 @@
 
 namespace Infra
 {
-    std::vector<std::string> splitStr(std::string const &str, std::string const &delim)
-    {
-        std::vector<std::string> strs;
+    inline std::vector<std::string> splitStr(std::string const& str, std::string const& delim) {
+        std::vector<std::string> result;
 
-        std::size_t begin = 0, loc = std::string::npos;
+        if (delim.empty()) {
+            result.push_back(str);
+            return result;
+        }
 
-        do
-        {
-            loc = str.find(delim, begin);
+        std::size_t start = 0;
+        std::size_t end = str.find(delim);
 
-            if (loc != begin)
-            {
-                strs.push_back(str.substr(begin, loc - begin));
+        while (end != std::string::npos) {
+            std::string token = str.substr(start, end - start);
+            if (!token.empty()) {
+                result.push_back(token);
             }
+            start = end + delim.size();
+            end = str.find(delim, start);
+        }
 
-            begin = loc + 1;
-        } while (loc != std::string::npos && begin < str.size());
+        std::string lastToken = str.substr(start);
+        if (!lastToken.empty()) {
+            result.push_back(lastToken);
+        }
 
-        return strs;
+        return result;
     }
 }
